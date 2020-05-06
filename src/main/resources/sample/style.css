@@ -1,0 +1,14 @@
+.header {
+    -fx-background-color: drakgrey;
+    -fx-border-color: darkgrey;
+}
+
+.page {
+    -fx-background-color: darkgrey;
+    -fx-border-color: darkgrey;
+}
+
+.box {
+    -fx-background-color: drakgrey;
+    -fx-border-color: darkgrey;
+}
