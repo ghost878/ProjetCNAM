@@ -1,10 +1,10 @@
 package server;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.net.UnknownHostException;
 
 /**
  * Class Server
@@ -14,28 +14,54 @@ public class Server {
      * Socket en attente de demande de connexion entrante
      */
     private ServerSocket serverSocket;
+    private int port = 3333;
+    private boolean isRunning = true;
+    private String host = "192.168.1.40";
 
     /**
      * Constructeur du serveur
      */
-    public Server(int port) throws IOException {
-        this.serverSocket = new ServerSocket(port);
+    public Server() throws IOException {
+        try {
+            this.serverSocket = new ServerSocket(this.port,100, InetAddress.getByName(host));
+        } catch (UnknownHostException e) {
+            System.out.println("Erreur lors de la construction du serveur (Hôte inconnu) - Server Constructor Error");
+            e.printStackTrace();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * Boucle d'écoute du serveur.
      */
     public void listen() throws IOException {
-        // pool de threads à utiliser pour gérer les connexions
-        ExecutorService pool = Executors.newCachedThreadPool();
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(isRunning) {
+                    try {
+                        Socket client = serverSocket.accept();
+                        System.out.println("Connexion cliente reçue");
+                        Thread t = new Thread(new ClientProcessor(client));
+                        t.start();
+                    } catch(IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                try {
+                    serverSocket.close();
+                } catch(IOException e) {
+                    e.printStackTrace();
+                    serverSocket = null;
+                }
+            }
+        });
+        t.start();
+    }
 
-        //Création de la liste des connexions
-        ActiveConnections activeConnections = new ActiveConnections();
-        System.out.println("Serveur démarré port 3333");
-        while(true) {
-            Socket clientSocket = serverSocket.accept();
-            pool.submit(new ServerConnection(clientSocket,activeConnections));
-        }
+    public void close() {
+        this.isRunning = false;
     }
 
     /**
@@ -43,7 +69,7 @@ public class Server {
      */
     public static void main(String[]args) {
         try {
-            Server server = new Server(3333);
+            Server server = new Server();
             server.listen();
         } catch(IOException e) {
             e.printStackTrace();

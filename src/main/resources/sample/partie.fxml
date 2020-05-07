@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1080.0" style="-fx-background-color: darkgreen;" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.PartieController">
+    <top>
+        <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+            <children>
+                <ImageView fitHeight="84.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@img/carte.png" />
+                    </image>
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </HBox.margin>
+                </ImageView>
+                <ImageView fitHeight="84.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@img/carte.png" />
+                    </image>
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </HBox.margin>
+                </ImageView>
+                <ImageView fitHeight="84.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@img/carte.png" />
+                    </image>
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </HBox.margin>
+                </ImageView>
+                <ImageView fitHeight="84.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@img/carte.png" />
+                    </image>
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </HBox.margin>
+                </ImageView>
+                <ImageView fitHeight="84.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@img/carte.png" />
+                    </image>
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </HBox.margin>
+                </ImageView>
+                <ImageView fitHeight="84.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@img/carte.png" />
+                    </image>
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </HBox.margin>
+                </ImageView>
+            </children>
+        </HBox>
+    </top>
+    <bottom>
+        <HBox alignment="CENTER" prefHeight="194.0" prefWidth="1080.0" BorderPane.alignment="CENTER">
+            <children>
+                <ImageView fitHeight="84.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@img/carte.png" />
+                    </image>
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </HBox.margin>
+                </ImageView>
+                <ImageView fitHeight="84.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@img/carte.png" />
+                    </image>
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </HBox.margin>
+                </ImageView>
+                <ImageView fitHeight="84.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@img/carte.png" />
+                    </image>
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </HBox.margin>
+                </ImageView>
+                <ImageView fitHeight="84.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@img/carte.png" />
+                    </image>
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </HBox.margin>
+                </ImageView>
+                <ImageView fitHeight="84.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@img/carte.png" />
+                    </image>
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </HBox.margin>
+                </ImageView>
+                <ImageView fitHeight="84.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@img/carte.png" />
+                    </image>
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </HBox.margin>
+                </ImageView>
+            </children>
+        </HBox>
+    </bottom>
+    <left>
+        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <children>
+                <ImageView fitHeight="84.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@img/carte.png" />
+                    </image>
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </HBox.margin>
+                </ImageView>
+            </children>
+        </HBox>
+    </left>
+    <right>
+        <BorderPane BorderPane.alignment="CENTER">
+            <top>
+                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                    <children>
+                        <ImageView fitHeight="84.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@img/carte.png" />
+                            </image>
+                            <HBox.margin>
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                            </HBox.margin>
+                        </ImageView>
+                        <ImageView fitHeight="84.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@img/carte.png" />
+                            </image>
+                            <HBox.margin>
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                            </HBox.margin>
+                        </ImageView>
+                    </children>
+                </HBox>
+            </top>
+            <bottom>
+                <VBox BorderPane.alignment="CENTER">
+                    <children>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                            <children>
+                                <ImageView fitHeight="84.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@img/carte.png" />
+                                    </image>
+                                    <HBox.margin>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </HBox.margin>
+                                </ImageView>
+                                <ImageView fitHeight="84.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@img/carte.png" />
+                                    </image>
+                                    <HBox.margin>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </HBox.margin>
+                                </ImageView>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </bottom>
+        </BorderPane>
+    </right>
+</BorderPane>

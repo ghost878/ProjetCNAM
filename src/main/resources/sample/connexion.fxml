@@ -15,8 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<VBox fx:id="box" prefHeight="800.0" prefWidth="1280.0" styleClass="box" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ConnexionController">
+<VBox fx:id="box" prefHeight="800.0" prefWidth="1280.0" styleClass="box" stylesheets="@style.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ConnexionController">
    <children>
       <Pane fx:id="header" prefHeight="192.0" prefWidth="447.0" styleClass="header">
          <children>
@@ -43,17 +42,17 @@
                                     <Font name="Cambria" size="36.0" />
                                  </font>
                               </Label>
-                              <TextField promptText="username">
+                              <TextField fx:id="login" promptText="username">
                                  <VBox.margin>
                                     <Insets left="200.0" right="200.0" />
                                  </VBox.margin>
                               </TextField>
-                              <PasswordField promptText="password">
+                              <PasswordField fx:id="pass" promptText="password">
                                  <VBox.margin>
                                     <Insets left="200.0" right="200.0" />
                                  </VBox.margin>
                               </PasswordField>
-                              <Button mnemonicParsing="false" text="Se connecter">
+                              <Button mnemonicParsing="false" onAction="#onLogin" text="Se connecter">
                                  <VBox.margin>
                                     <Insets left="280.0" />
                                  </VBox.margin>
@@ -94,7 +93,7 @@
                                     <Insets left="30.0" />
                                  </VBox.margin>
                               </CheckBox>
-                              <Button mnemonicParsing="false" text="S'inscrire">
+                              <Button mnemonicParsing="false" onAction="#onSignIn" text="S'inscrire">
                                  <VBox.margin>
                                     <Insets left="280.0" />
                                  </VBox.margin>
