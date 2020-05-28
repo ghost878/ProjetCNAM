@@ -16,7 +16,7 @@ public class Server {
     private ServerSocket serverSocket;
     private int port = 3333;
     private boolean isRunning = true;
-    private String host = "192.168.56.1";
+    private String host = "192.168.1.77";
 
     /**
      * Constructeur du serveur
