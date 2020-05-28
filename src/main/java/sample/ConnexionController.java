@@ -1,6 +1,7 @@
 package sample;
 
 import client.ClientConnexion;
+import javafx.scene.layout.VBox;
 import server.MySQLConnection;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -16,12 +17,28 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.sql.*;
 
 public class ConnexionController extends Application {
 
-    private Connection connection;
+    public static MySQLConnection db;
+    public static String pseudo;
 
+    static {
+        try {
+            db = new MySQLConnection("jdbc:mysql://localhost:3306/tarot_project","root","");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Connection connection;
+    //public Stage accueilStage;
+    public static Stage primaryStage = new Stage();
+    public static Stage stageAccueil = new Stage();
     @FXML
     private ImageView background;
     @FXML
@@ -51,23 +68,62 @@ public class ConnexionController extends Application {
         launch(args);
     }
 
-    public void onLogin(ActionEvent event) throws SQLException, ClassNotFoundException {
-       String login = this.login.getText();
+
+    public void onLogin(ActionEvent event) throws SQLException, ClassNotFoundException, IOException {
+       pseudo = this.login.getText();
        String password = this.pass.getText();
        if (login != null && password != null) {
-           MySQLConnection db = new MySQLConnection("jdbc:mysql://localhost:3306/tarot_project","root","");
+           //MySQLConnection db = new MySQLConnection("jdbc:mysql://localhost:3306/tarot_project","root","");
            this.connection = db.getConnection();
            String query = "SELECT pseudo, motdepasse FROM utilisateur WHERE pseudo=? AND motdepasse=?";
            PreparedStatement ps = this.connection.prepareStatement(query);
-           ps.setString(1,login);
+           ps.setString(1,pseudo);
            ps.setString(2,password);
            ResultSet results = ps.executeQuery();
 
            if (results.next()) {
                System.out.println("Utilisateur et mot de passe correct");
-               JOptionPane.showMessageDialog(null,"L'utilisateur et le mot de passe sont correct");
+               //JOptionPane.showMessageDialog(null,"L'utilisateur et le mot de passe sont correct");
+               FXMLLoader loader = new FXMLLoader(getClass().getResource("accueil.fxml"));
+               Parent root = loader.load();
+               Scene scene = new Scene(root, 700, 400);
+               scene.getStylesheets().add(getClass().getResource("style.css").toString());
+               stageAccueil.setTitle("Accueil");
+               stageAccueil.setScene(scene);
+               stageAccueil.show();
+               primaryStage.hide();
+
+               Statement stmt = this.connection.createStatement();
+               /**
+                * Exemple de requête avec BD
+                */
+               ResultSet rs = stmt.executeQuery("SELECT nom, prenom, pseudo, email  FROM utilisateur WHERE pseudo LIKE \""+ pseudo +"\"");
+               //ResultSet rs = stmt.executeQuery("SELECT *  FROM utilisateur");
+               //while(rs.next()) {
+               rs.next();
+                   String prenom = rs.getString("prenom");
+                   String nom = rs.getString("nom");
+                String email = rs.getString("email");
+
+               //}
+              // rs.next();
+               //String name = rs.getString(1);
+               System.out.println(nom);
+               VBox infoBox = (VBox) root.lookup("#boxInfo");
+               infoBox.getChildren().add(new Label("Prenom : " + prenom));
+               infoBox.getChildren().add(new Label("Nom : " + nom));
+               infoBox.getChildren().add(new Label("Email : " + email));
+               Label lblData = (Label) root.lookup("#labelBonjour");
+               lblData.setText("Bonjour " + pseudo);
+
+               AccueilController controller = loader.getController();
+               //controller.init();
+
+
+
+
                //lancement de la session - connexion au serveur
-               ClientConnexion client = new ClientConnexion("192.168.1.40",3333,"pseudo");
+               ClientConnexion client = new ClientConnexion("192.168.1.77",3333,"pseudo");
            } else {
                System.out.println("Utilisateur ou mot de passe incorrect");
                JOptionPane.showMessageDialog(null,"Utilisateur ou mot de passe incorrects");
@@ -80,10 +136,10 @@ public class ConnexionController extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("connexion.fxml"));
         Parent root = loader.load();
-        Scene scene = new Scene(root, 1280, 800);
+        Scene scene = new Scene(root, 700, 400);
         scene.getStylesheets().add(getClass().getResource("style.css").toString());
         primaryStage.setTitle("Connexion");
         primaryStage.setScene(scene);

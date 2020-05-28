@@ -3,6 +3,7 @@ package client;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Random;
@@ -93,7 +94,9 @@ public class ClientConnexion implements Runnable {
         return response;
     }
 
-    public static void main(String[]args) {
-         //ClientConnexion cltConnexion = new ClientConnexion("192.168.1.40",3333);
+    public static void main(String[]args) throws UnknownHostException {
+         ClientConnexion cltConnexion = new ClientConnexion("192.168.1.77",3333,"Hippo");
+         InetAddress adrLocale = InetAddress.getLocalHost();
+         System.out.println(adrLocale);
     }
 }

@@ -50,6 +50,9 @@ public class ClientProcessor implements Runnable {
                         break;
                     case "CLOSE":
                         toSend = "Communication terminée";
+                    case "PLAY":
+                        toSend = "En attente d'une partie";
+                        break;
                     default:
                         toSend = "Commande inconnu !";
                         break;
