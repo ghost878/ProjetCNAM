@@ -73,10 +73,11 @@ public class ConnexionController extends Application {
     public void onLogin(ActionEvent event) throws SQLException, ClassNotFoundException, IOException {
        pseudo = this.login.getText();
        String password = this.pass.getText();
+        MySQLConnection db = new MySQLConnection("jdbc:mysql://localhost:3306/tarot_project","root","");
+        this.connection = db.getConnection();
 /*
        if (login != null && password != null) {
-           //MySQLConnection db = new MySQLConnection("jdbc:mysql://localhost:3306/tarot_project","root","");
-           this.connection = db.getConnection();
+
            String query = "SELECT pseudo, motdepasse FROM utilisateur WHERE pseudo=? AND motdepasse=?";
            PreparedStatement ps = this.connection.prepareStatement(query);
            ps.setString(1,pseudo);
@@ -130,18 +131,43 @@ public class ConnexionController extends Application {
                //lancement de la session - connexion au serveur
                //System.out.println(pseudo);
             ArrayList<String> connects = new ArrayList<>();
-            connects.add("INSC");
+            connects.add("CONN");
             connects.add(pseudo);
             connects.add(password);
             ClientConnexion client = new ClientConnexion("192.168.1.77",3333,connects);
-            Thread t = new Thread(client);
-            t.start();
-/*           } else {
+            ArrayList<String> responses = client.run();
+            if(responses.get(0).equals("OK")) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("accueil.fxml"));
+                Parent root = loader.load();
+                Scene scene = new Scene(root, 700, 400);
+                scene.getStylesheets().add(getClass().getResource("style.css").toString());
+                stageAccueil.setTitle("Accueil");
+                stageAccueil.setScene(scene);
+                stageAccueil.show();
+                primaryStage.hide();
+
+
+                String nom = responses.get(1);
+                String prenom = responses.get(2);
+                String email = responses.get(3);
+
+               //}
+              // rs.next();
+               //String name = rs.getString(1);
+               System.out.println(nom);
+               VBox infoBox = (VBox) root.lookup("#boxInfo");
+               infoBox.getChildren().add(new Label("Prenom : " + prenom));
+               infoBox.getChildren().add(new Label("Nom : " + nom));
+               infoBox.getChildren().add(new Label("Email : " + email));
+               Label lblData = (Label) root.lookup("#labelBonjour");
+               lblData.setText("Bonjour " + pseudo);
+
+           } else {
                System.out.println("Utilisateur ou mot de passe incorrect");
                JOptionPane.showMessageDialog(null,"Utilisateur ou mot de passe incorrects");
-           }*/
-       //}
-    }
+           }
+       }
+
 
     public void onSignIn(ActionEvent event) {
         System.out.println("Inscription function");

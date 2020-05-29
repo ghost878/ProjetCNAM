@@ -1,14 +1,17 @@
 package client;
 
+import javafx.beans.Observable;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observer;
 import java.util.Random;
 
-public class ClientConnexion implements Runnable {
+public class ClientConnexion {
 
     private Socket connexion;
     private PrintWriter writer;
@@ -16,6 +19,7 @@ public class ClientConnexion implements Runnable {
     private ArrayList<String> datas;
     private static int count = 0;
     private String name = "Client-";
+    private ArrayList<String> response;
 
     /**
      *
@@ -24,6 +28,7 @@ public class ClientConnexion implements Runnable {
      */
     public ClientConnexion(String host, int port, ArrayList<String> datas) {
         try {
+            this.
             name += ++count;
             this.connexion = new Socket(host,port);
             this.datas = datas;
@@ -35,18 +40,21 @@ public class ClientConnexion implements Runnable {
         }
     }
 
-    @Override
+    public ArrayList<String> getResponse() {
+        return response;
+    }
+
     /**
      * Simulation d'envoie de commande de client au serveur.
      */
-    public void run(){
-        for(int i =0; i < 10; i++){
-            try {
-                Thread.currentThread().sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            try {
+    public ArrayList<String> run() {
+        //for(int i =0; i < 10; i++){
+        try {
+            Thread.currentThread().sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        try {
 /*                writer = new PrintWriter(this.connexion.getOutputStream(), true);
                 reader = new BufferedInputStream(this.connexion.getInputStream());
                 //On envoie la commande au serveur
@@ -58,33 +66,28 @@ public class ClientConnexion implements Runnable {
                 //On attend la réponse
                 String reponse = read();
                 //System.out.println("\t * " + this.pseudo + " Réponse reçue " + reponse);*/
-                OutputStream outputStream = connexion.getOutputStream();
-                //On envoie la commande au serveur
-                ObjectOutputStream objectOutputStream = new ObjectOutputStream(new BufferedOutputStream(outputStream));
+            OutputStream outputStream = connexion.getOutputStream();
+            //On envoie la commande au serveur
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
 
-                // Liste des messages a envoyer
-                objectOutputStream.writeObject(this.datas);
-                objectOutputStream.flush();
+            // Liste des messages a envoyer
+            objectOutputStream.writeObject(this.datas);
+            objectOutputStream.flush();
 
-                //On attend la réponse
-                InputStream inputStream = connexion.getInputStream();
-                ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-                List<Serializable> response = (List<Serializable>) objectInputStream.readObject();
-                objectInputStream.close();
-                System.out.println("\t * " + name + " : Réponse reçue " + response);
-                connexion.close();
-            } catch (IOException | ClassNotFoundException e1) {
-                e1.printStackTrace();
-            }
-            try {
-                Thread.currentThread().sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            //On attend la réponse
+            InputStream inputStream = connexion.getInputStream();
+            ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+            this.response = (ArrayList<String>) objectInputStream.readObject();
+            System.out.println("Réponse du serveur " + response);
+            objectInputStream.close();
+            System.out.println("\t * " + name + " : Réponse reçue " + response);
+            return this.response;
+            //connexion.close();
+        } catch (IOException | ClassNotFoundException e1) {
+            e1.printStackTrace();
+            return null;
         }
-        writer.write("CLOSE");
-        writer.flush();
-        writer.close();
+     //   }
     }
 
     /**

@@ -4,6 +4,10 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,8 +16,11 @@ public class ClientProcessor implements Runnable {
     private Socket sock;
     private PrintWriter writer = null;
     private BufferedInputStream reader = null;
+    private Connection connection;
 
-    public ClientProcessor(Socket pSock) {
+    public ClientProcessor(Socket pSock) throws SQLException, ClassNotFoundException {
+        MySQLConnection db = new MySQLConnection("jdbc:mysql://localhost:3306/tarot_project","root","");
+        this.connection = db.getConnection();
         sock = pSock;
     }
 
@@ -34,7 +41,7 @@ public class ClientProcessor implements Runnable {
                 //On attend la demande du client
                 InputStream inputStream = sock.getInputStream();
 
-                ObjectInputStream objectInputStream = new ObjectInputStream(new BufferedInputStream(inputStream));
+                ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
                 List<String> responses = (List<String>) objectInputStream.readObject();
                 System.out.println("Im after inputstream");
                 System.out.println("REPONSE : "+responses);
@@ -53,12 +60,31 @@ public class ClientProcessor implements Runnable {
                 System.out.println(sock);
                 OutputStream outputStream = sock.getOutputStream();
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-                List<Serializable> toSend = new ArrayList<>();
+                List<String> toSend = new ArrayList<>();
 
                 switch (responses.get(0).toUpperCase()) {
-                    case "INSC":
+                    case "CONN":
+                        String pseudo = responses.get(1);
+                        String password = responses.get(2);
+                        String query = "SELECT nom, prenom, email,pseudo, motdepasse FROM utilisateur WHERE pseudo=? AND motdepasse=?";
+                        PreparedStatement ps = this.connection.prepareStatement(query);
+                        ps.setString(1,pseudo);
+                        ps.setString(2,password);
+                        ResultSet results = ps.executeQuery();
                      System.out.println(responses.get(1));
                      System.out.println(responses.get(2));
+
+                        if (results.next()) {
+                            System.out.println("Utilisateur et mot de passe correct");
+                            toSend.add("OK");
+                            toSend.add(results.getString("nom"));
+                            toSend.add(results.getString("prenom"));
+                            toSend.add(results.getString("email"));
+
+                        }
+                        else {
+                            System.out.println("Utilisateur et mot de passe incorrects");
+                        }
                   /*  case "LIST":
                         //toSend.add(genericList(responses.get(1)));
                         break;*/
@@ -83,6 +109,8 @@ public class ClientProcessor implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
