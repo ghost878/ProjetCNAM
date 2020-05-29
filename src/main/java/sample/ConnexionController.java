@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 import javax.swing.*;
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class ConnexionController extends Application {
 
@@ -72,6 +73,7 @@ public class ConnexionController extends Application {
     public void onLogin(ActionEvent event) throws SQLException, ClassNotFoundException, IOException {
        pseudo = this.login.getText();
        String password = this.pass.getText();
+/*
        if (login != null && password != null) {
            //MySQLConnection db = new MySQLConnection("jdbc:mysql://localhost:3306/tarot_project","root","");
            this.connection = db.getConnection();
@@ -94,9 +96,11 @@ public class ConnexionController extends Application {
                primaryStage.hide();
 
                Statement stmt = this.connection.createStatement();
-               /**
+               */
+/**
                 * Exemple de requête avec BD
-                */
+                *//*
+
                ResultSet rs = stmt.executeQuery("SELECT nom, prenom, pseudo, email  FROM utilisateur WHERE pseudo LIKE \""+ pseudo +"\"");
                //ResultSet rs = stmt.executeQuery("SELECT *  FROM utilisateur");
                //while(rs.next()) {
@@ -120,15 +124,21 @@ public class ConnexionController extends Application {
                //controller.init();
 
 
+*/
 
 
                //lancement de la session - connexion au serveur
-               ClientConnexion client = new ClientConnexion("192.168.1.77",3333,"pseudo");
-           } else {
+               //System.out.println(pseudo);
+            ArrayList<String> connects = new ArrayList<>();
+            connects.add("INSC");
+            connects.add(pseudo);
+            connects.add(password);
+               ClientConnexion client = new ClientConnexion("192.168.1.77",3333,connects);
+/*           } else {
                System.out.println("Utilisateur ou mot de passe incorrect");
                JOptionPane.showMessageDialog(null,"Utilisateur ou mot de passe incorrects");
-           }
-       }
+           }*/
+       //}
     }
 
     public void onSignIn(ActionEvent event) {

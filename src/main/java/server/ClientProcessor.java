@@ -1,11 +1,11 @@
 package server;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientProcessor implements Runnable {
 
@@ -26,53 +26,57 @@ public class ClientProcessor implements Runnable {
         while (!sock.isClosed()) {
 
             try {
-                writer = new PrintWriter(sock.getOutputStream());
+                //writer = new PrintWriter(sock.getOutputStream());
                 reader = new BufferedInputStream(sock.getInputStream());
-
-                String response = read();
+                //On attend la demande du client
+                InputStream inputStream = sock.getInputStream();
+                ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+                List<String> responses = (List<String>) objectInputStream.readObject();
+                System.out.println(responses);
+                //String response = read();
                 InetSocketAddress remote = (InetSocketAddress) sock.getRemoteSocketAddress();
 
+                //On affiche quelques infos, pour le débuggage
                 String debug = "";
                 debug = "Thread : " + Thread.currentThread().getName() + ". ";
                 debug += "Demande de l'adresse : " + remote.getAddress().getHostAddress() + ".";
                 debug += " Sur le port : " + remote.getPort() + ".\n";
-                debug += "\t -> Commande reçue : " + response + "\n";
+                debug += "Received [" + responses.size() + "] messages from: " + sock;
                 System.err.println("\n" + debug);
 
-                String toSend = "";
+                //On traite la demande du client en fonction de la commande envoyée
+                OutputStream outputStream = sock.getOutputStream();
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+                List<Serializable> toSend = new ArrayList<>();
 
-                switch (response.toUpperCase()) {
-                    case "LOGIN":
-                        toSend = "Client connecté";
-                        break;
-                    case "LOGOUT":
-                        toSend = "Client deconnecté";
-                        break;
-                    case "CLOSE":
-                        toSend = "Communication terminée";
-                    case "PLAY":
-                        toSend = "En attente d'une partie";
-                        break;
+                switch (responses.get(0).toUpperCase()) {
+                    case "INSC":
+                     System.out.println(responses.get(1));
+                     System.out.println(responses.get(2));
+                  /*  case "LIST":
+                        //toSend.add(genericList(responses.get(1)));
+                        break;*/
                     default:
-                        toSend = "Commande inconnu !";
+                        toSend.add("UNKNOWN_COMMAND");
                         break;
                 }
 
-                //On envoie la réponse au client
-                writer.write(toSend);
-                writer.flush();
+                objectOutputStream.writeObject(toSend);
+                objectOutputStream.flush();
+                objectOutputStream.close();
 
                 if (closeConnexion) {
-                    System.err.println("Commande close détectée");
-                    writer = null;
+                    System.err.println("Fermeture de la connexion");
                     reader = null;
                     sock.close();
                     break;
                 }
             } catch (SocketException e) {
-                System.err.println("Connexion interrompue");
+                System.err.println("Interruption de la connexion");
                 break;
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
