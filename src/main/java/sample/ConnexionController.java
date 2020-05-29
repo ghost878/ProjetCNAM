@@ -133,7 +133,9 @@ public class ConnexionController extends Application {
             connects.add("INSC");
             connects.add(pseudo);
             connects.add(password);
-               ClientConnexion client = new ClientConnexion("192.168.1.77",3333,connects);
+            ClientConnexion client = new ClientConnexion("192.168.1.77",3333,connects);
+            Thread t = new Thread(client);
+            t.start();
 /*           } else {
                System.out.println("Utilisateur ou mot de passe incorrect");
                JOptionPane.showMessageDialog(null,"Utilisateur ou mot de passe incorrects");

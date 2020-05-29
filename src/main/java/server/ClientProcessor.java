@@ -18,21 +18,26 @@ public class ClientProcessor implements Runnable {
     }
 
     //Le traitement lancé dans un thread séparé
+
     public void run() {
         System.err.println("Lancement du traitement de la connexion cliente");
 
         boolean closeConnexion = false;
         //tant que la connexion est active, on traite les demandes
-        while (!sock.isClosed()) {
-
+        while (!Thread.currentThread().isInterrupted()) {
+            System.out.println("coucou");
+            System.out.println(sock);
             try {
+                System.out.println("In try");
                 //writer = new PrintWriter(sock.getOutputStream());
-                reader = new BufferedInputStream(sock.getInputStream());
+                //reader = new BufferedInputStream(sock.getInputStream());
                 //On attend la demande du client
                 InputStream inputStream = sock.getInputStream();
-                ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+
+                ObjectInputStream objectInputStream = new ObjectInputStream(new BufferedInputStream(inputStream));
                 List<String> responses = (List<String>) objectInputStream.readObject();
-                System.out.println(responses);
+                System.out.println("Im after inputstream");
+                System.out.println("REPONSE : "+responses);
                 //String response = read();
                 InetSocketAddress remote = (InetSocketAddress) sock.getRemoteSocketAddress();
 
@@ -45,6 +50,7 @@ public class ClientProcessor implements Runnable {
                 System.err.println("\n" + debug);
 
                 //On traite la demande du client en fonction de la commande envoyée
+                System.out.println(sock);
                 OutputStream outputStream = sock.getOutputStream();
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
                 List<Serializable> toSend = new ArrayList<>();

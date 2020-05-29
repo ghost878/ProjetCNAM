@@ -60,7 +60,7 @@ public class ClientConnexion implements Runnable {
                 //System.out.println("\t * " + this.pseudo + " Réponse reçue " + reponse);*/
                 OutputStream outputStream = connexion.getOutputStream();
                 //On envoie la commande au serveur
-                ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(new BufferedOutputStream(outputStream));
 
                 // Liste des messages a envoyer
                 objectOutputStream.writeObject(this.datas);
