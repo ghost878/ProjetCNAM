@@ -4,10 +4,7 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,10 +29,7 @@ public class ClientProcessor implements Runnable {
         boolean closeConnexion = false;
         //tant que la connexion est active, on traite les demandes
         while (!Thread.currentThread().isInterrupted()) {
-            System.out.println("coucou");
-            System.out.println(sock);
             try {
-                System.out.println("In try");
                 //writer = new PrintWriter(sock.getOutputStream());
                 //reader = new BufferedInputStream(sock.getInputStream());
                 //On attend la demande du client
@@ -43,8 +37,6 @@ public class ClientProcessor implements Runnable {
 
                 ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
                 List<String> responses = (List<String>) objectInputStream.readObject();
-                System.out.println("Im after inputstream");
-                System.out.println("REPONSE : "+responses);
                 //String response = read();
                 InetSocketAddress remote = (InetSocketAddress) sock.getRemoteSocketAddress();
 
@@ -61,34 +53,44 @@ public class ClientProcessor implements Runnable {
                 OutputStream outputStream = sock.getOutputStream();
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
                 List<String> toSend = new ArrayList<>();
+                System.out.println(responses.get(0).toUpperCase());
+                if(responses.get(0).toUpperCase().equals("CONN")) {
+                    //case "CONN":
+                    String pseudo = responses.get(1);
+                    String password = responses.get(2);
+                    String query = "SELECT id, nom, prenom, email,pseudo, motdepasse FROM utilisateur WHERE pseudo=? AND motdepasse=?";
+                    PreparedStatement ps = this.connection.prepareStatement(query);
+                    ps.setString(1, pseudo);
+                    ps.setString(2, password);
+                    ResultSet results = ps.executeQuery();
 
-                switch (responses.get(0).toUpperCase()) {
-                    case "CONN":
-                        String pseudo = responses.get(1);
-                        String password = responses.get(2);
-                        String query = "SELECT nom, prenom, email,pseudo, motdepasse FROM utilisateur WHERE pseudo=? AND motdepasse=?";
-                        PreparedStatement ps = this.connection.prepareStatement(query);
-                        ps.setString(1,pseudo);
-                        ps.setString(2,password);
-                        ResultSet results = ps.executeQuery();
-                     System.out.println(responses.get(1));
-                     System.out.println(responses.get(2));
+                    if (results.next()) {
+                        System.out.println("Utilisateur et mot de passe correct");
+                        toSend.add("OK");
+                        toSend.add(results.getString("nom"));
+                        toSend.add(results.getString("prenom"));
+                        toSend.add(results.getString("email"));
+                        toSend.add(results.getString("id"));
 
-                        if (results.next()) {
-                            System.out.println("Utilisateur et mot de passe correct");
-                            toSend.add("OK");
-                            toSend.add(results.getString("nom"));
-                            toSend.add(results.getString("prenom"));
-                            toSend.add(results.getString("email"));
-
-                        }
-                        else {
-                            System.out.println("Utilisateur et mot de passe incorrects");
-                        }
+                    } else {
+                        System.out.println("Utilisateur et mot de passe incorrects");
+                    }
+                    //break;
                   /*  case "LIST":
                         //toSend.add(genericList(responses.get(1)));
                         break;*/
-                    default:
+                } else if(responses.get(0).toUpperCase().equals("PLAYLOBBY")) {
+                    String idUser = responses.get(1);
+                    System.out.println("PLAY LOBBY");
+                    //String query1 = "INSERT INTO joueur(utilisateur) VALUES (" + idUser + ")";
+                    Statement stmt = this.connection.createStatement();
+
+                    stmt.executeUpdate("INSERT INTO joueur(utilisateur) VALUES (" + idUser + ")");
+                    System.out.println("INSERT INTO joueur(utilisateur) VALUES (" + idUser + ")");
+                    //break;
+                    //default:
+                    toSend.add("JOINLOBBY");
+                } else {
                         toSend.add("UNKNOWN_COMMAND");
                         break;
                 }
@@ -103,6 +105,7 @@ public class ClientProcessor implements Runnable {
                     sock.close();
                     break;
                 }
+
             } catch (SocketException e) {
                 System.err.println("Interruption de la connexion");
                 break;

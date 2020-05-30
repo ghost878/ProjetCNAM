@@ -40,6 +40,7 @@ public class ConnexionController extends Application {
     //public Stage accueilStage;
     public static Stage primaryStage = new Stage();
     public static Stage stageAccueil = new Stage();
+    public static String idUser;
     @FXML
     private ImageView background;
     @FXML
@@ -150,11 +151,11 @@ public class ConnexionController extends Application {
                 String nom = responses.get(1);
                 String prenom = responses.get(2);
                 String email = responses.get(3);
+                idUser = responses.get(4);
 
                //}
               // rs.next();
                //String name = rs.getString(1);
-               System.out.println(nom);
                VBox infoBox = (VBox) root.lookup("#boxInfo");
                infoBox.getChildren().add(new Label("Prenom : " + prenom));
                infoBox.getChildren().add(new Label("Nom : " + nom));

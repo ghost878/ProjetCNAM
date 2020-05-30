@@ -19,6 +19,9 @@ public class Server {
     private boolean isRunning = true;
     private String host = "192.168.1.77";
 
+    //private Lobby;
+
+
     /**
      * Constructeur du serveur
      */

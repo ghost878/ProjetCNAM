@@ -1,5 +1,6 @@
 package sample;
 
+import client.ClientConnexion;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class AccueilController {
     @FXML
@@ -42,6 +44,15 @@ public class AccueilController {
 
     @FXML
     public void play() throws IOException {
+        ArrayList<String> connects = new ArrayList<>();
+        connects.add("PLAYLOBBY");
+        connects.add(ConnexionController.idUser);
+        System.out.println("Méthode plays " + connects.get(1));
+        ClientConnexion client = new ClientConnexion("192.168.1.77",3333,connects);
+        client.run();
+        System.out.println("Reponse :" + client.run().get(0));
+
+
         ConnexionController.stageAccueil.hide();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("partie.fxml"));
         Parent root = loader.load();

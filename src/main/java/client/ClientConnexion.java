@@ -81,8 +81,9 @@ public class ClientConnexion {
             System.out.println("Réponse du serveur " + response);
             objectInputStream.close();
             System.out.println("\t * " + name + " : Réponse reçue " + response);
+            this.connexion.close();
             return this.response;
-            //connexion.close();
+
         } catch (IOException | ClassNotFoundException e1) {
             e1.printStackTrace();
             return null;
