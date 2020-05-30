@@ -49,8 +49,8 @@ public class AccueilController {
         connects.add(ConnexionController.idUser);
         System.out.println("Méthode plays " + connects.get(1));
         ClientConnexion client = new ClientConnexion("192.168.1.77",3333,connects);
-        client.run();
-        System.out.println("Reponse :" + client.run().get(0));
+        ArrayList<String> datas = client.run();
+        System.out.println("Reponse :" + datas.get(0));
 
 
         ConnexionController.stageAccueil.hide();

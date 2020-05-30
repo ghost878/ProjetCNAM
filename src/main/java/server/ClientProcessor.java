@@ -99,12 +99,12 @@ public class ClientProcessor implements Runnable {
                 objectOutputStream.flush();
                 objectOutputStream.close();
 
-                if (closeConnexion) {
+/*                if (closeConnexion) {
                     System.err.println("Fermeture de la connexion");
                     reader = null;
                     sock.close();
                     break;
-                }
+                }*/
 
             } catch (SocketException e) {
                 System.err.println("Interruption de la connexion");
