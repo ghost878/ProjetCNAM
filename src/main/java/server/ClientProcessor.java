@@ -82,26 +82,44 @@ public class ClientProcessor implements Runnable {
                 } else if(responses.get(0).toUpperCase().equals("PLAYLOBBY")) {
                     String idUser = responses.get(1);
                     System.out.println("PLAY LOBBY");
-                    //String query1 = "INSERT INTO joueur(utilisateur) VALUES (" + idUser + ")";
                     Statement stmt = this.connection.createStatement();
 
                     stmt.executeUpdate("INSERT INTO joueur(utilisateur) VALUES (" + idUser + ")");
-                    System.out.println("INSERT INTO joueur(utilisateur) VALUES (" + idUser + ")");
-                    //break;
-                    //default:
                     toSend.add("JOINLOBBY");
 
+
+
+                }
+                else if(responses.get(0).toUpperCase().equals("WAIT")) {
                     String query = "SELECT COUNT(id) AS\"nbJoueur\"  FROM joueur";
                     PreparedStatement ps = this.connection.prepareStatement(query);
                     ResultSet results = ps.executeQuery();
                     results.next();
                     String nbJoueur = results.getString("nbJoueur");
                     toSend.add(nbJoueur);
-                    if(Integer.parseInt(nbJoueur)%5 == 0) {
-                        toSend.add("LOBBYCOMPLETE");
-                    }
+                } else if(responses.get(0).toUpperCase().equals("PLAY")) {
+                    String query = "SELECT *  FROM main";
+                    PreparedStatement ps = this.connection.prepareStatement(query);
+                    ResultSet results = ps.executeQuery();
+                    System.out.println("toto");
+                    while(results.next()) {
+                    results.next();
+                    ArrayList<String> nomCartes = new ArrayList<>();
+                        for(int i =1; i<=15;i++) {
+                            nomCartes.add(results.getString("carte" + i));
+                        }
+                        System.out.println(nomCartes);
 
-                } else {
+                    String idCarte = results.getString("prenom");
+                    String nom = results.getString("nom");
+                    String email = results.getString("email");
+
+                    }
+                    // rs.next();
+
+                    String nbJoueur = results.getString("nbJoueur");
+                    toSend.add(nbJoueur);
+                }else {
                         toSend.add("UNKNOWN_COMMAND");
                         break;
                 }

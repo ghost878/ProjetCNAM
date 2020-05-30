@@ -48,18 +48,30 @@ public class AccueilController {
 
 
         ArrayList<String> connects = new ArrayList<>();
+        ArrayList<String> waits = new ArrayList<>();
         connects.add("PLAYLOBBY");
         connects.add(ConnexionController.idUser);
         System.out.println("Méthode plays " + connects.get(1));
         ClientConnexion client = new ClientConnexion("192.168.1.77",3333,connects);
         ArrayList<String> datas = client.run();
         System.out.println("Reponse :" + datas.get(0));
-
-        while(!datas.get(1).equals("5")) {
-            System.out.println(datas.get(1));
-            JOptionPane.showMessageDialog(null,"En attente de " + (5 - (Integer.parseInt(datas.get(1))%5)) + " joueurs");
+        int nbJoueur = -1;
+        while(nbJoueur !=0) {
+            waits.add("WAIT");
+            ClientConnexion client1 = new ClientConnexion("192.168.1.77",3333,waits);
+            ArrayList<String> datas1 = client1.run();
+            nbJoueur = Integer.parseInt(datas1.get(0))%5;
+            if(nbJoueur == 0) {
+                //JOptionPane.showMessageDialog(null,"Pret à jouer !");
+            } else {
+                JOptionPane.showMessageDialog(null,"En attente de " + (5 - (Integer.parseInt(datas1.get(0))%5)) + " joueurs");
+            }
         }
 
+        ArrayList<String> plays = new ArrayList<>();
+        connects.add("PLAY");
+        ClientConnexion client2 = new ClientConnexion("192.168.1.77",3333,plays);
+        client2.run();
 
         ConnexionController.stageAccueil.hide();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("partie.fxml"));
