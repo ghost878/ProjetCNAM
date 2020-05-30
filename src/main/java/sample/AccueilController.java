@@ -15,6 +15,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -44,6 +45,8 @@ public class AccueilController {
 
     @FXML
     public void play() throws IOException {
+
+
         ArrayList<String> connects = new ArrayList<>();
         connects.add("PLAYLOBBY");
         connects.add(ConnexionController.idUser);
@@ -51,6 +54,11 @@ public class AccueilController {
         ClientConnexion client = new ClientConnexion("192.168.1.77",3333,connects);
         ArrayList<String> datas = client.run();
         System.out.println("Reponse :" + datas.get(0));
+
+        while(!datas.get(1).equals("5")) {
+            System.out.println(datas.get(1));
+            JOptionPane.showMessageDialog(null,"En attente de " + (5 - (Integer.parseInt(datas.get(1))%5)) + " joueurs");
+        }
 
 
         ConnexionController.stageAccueil.hide();

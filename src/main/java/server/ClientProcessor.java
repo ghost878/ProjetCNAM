@@ -52,7 +52,7 @@ public class ClientProcessor implements Runnable {
                 System.out.println(sock);
                 OutputStream outputStream = sock.getOutputStream();
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-                List<String> toSend = new ArrayList<>();
+                List<Object> toSend = new ArrayList<>();
                 System.out.println(responses.get(0).toUpperCase());
                 if(responses.get(0).toUpperCase().equals("CONN")) {
                     //case "CONN":
@@ -90,6 +90,17 @@ public class ClientProcessor implements Runnable {
                     //break;
                     //default:
                     toSend.add("JOINLOBBY");
+
+                    String query = "SELECT COUNT(id) AS\"nbJoueur\"  FROM joueur";
+                    PreparedStatement ps = this.connection.prepareStatement(query);
+                    ResultSet results = ps.executeQuery();
+                    results.next();
+                    String nbJoueur = results.getString("nbJoueur");
+                    toSend.add(nbJoueur);
+                    if(Integer.parseInt(nbJoueur)%5 == 0) {
+                        toSend.add("LOBBYCOMPLETE");
+                    }
+
                 } else {
                         toSend.add("UNKNOWN_COMMAND");
                         break;
