@@ -1,5 +1,6 @@
 package server;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -14,6 +15,11 @@ public class ClientProcessor implements Runnable {
     private PrintWriter writer = null;
     private BufferedInputStream reader = null;
     private Connection connection;
+    public static int currentnumJoueur = 0;
+    public static int currentEquipe =1;
+    public static int currentPartie =1;
+    public static boolean callDone = false;
+
 
     public ClientProcessor(Socket pSock) throws SQLException, ClassNotFoundException {
         MySQLConnection db = new MySQLConnection("jdbc:mysql://localhost:3306/tarot_project","root","");
@@ -36,7 +42,7 @@ public class ClientProcessor implements Runnable {
                 InputStream inputStream = sock.getInputStream();
 
                 ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-                List<String> responses = (List<String>) objectInputStream.readObject();
+                List<Object> responses = (List<Object>) objectInputStream.readObject();
                 //String response = read();
                 InetSocketAddress remote = (InetSocketAddress) sock.getRemoteSocketAddress();
 
@@ -53,11 +59,10 @@ public class ClientProcessor implements Runnable {
                 OutputStream outputStream = sock.getOutputStream();
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
                 List<Object> toSend = new ArrayList<>();
-                System.out.println(responses.get(0).toUpperCase());
-                if(responses.get(0).toUpperCase().equals("CONN")) {
+                if(responses.get(0).toString().toUpperCase().equals("CONN")) {
                     //case "CONN":
-                    String pseudo = responses.get(1);
-                    String password = responses.get(2);
+                    String pseudo = (String) responses.get(1);
+                    String password = (String) responses.get(2);
                     String query = "SELECT id, nom, prenom, email,pseudo, motdepasse FROM utilisateur WHERE pseudo=? AND motdepasse=?";
                     PreparedStatement ps = this.connection.prepareStatement(query);
                     ps.setString(1, pseudo);
@@ -79,46 +84,220 @@ public class ClientProcessor implements Runnable {
                   /*  case "LIST":
                         //toSend.add(genericList(responses.get(1)));
                         break;*/
-                } else if(responses.get(0).toUpperCase().equals("PLAYLOBBY")) {
-                    String idUser = responses.get(1);
+                } else if(responses.get(0).toString().toUpperCase().equals("INSC")) {
+                    System.out.println("INSC");
+                    String nom = (String) responses.get(1);
+                    String prenom = (String) responses.get(2);
+                    String pseudo = (String) responses.get(3);
+                    String password = (String) responses.get(4);
+                    String email = (String) responses.get(5);
+                    String insertUser = "INSERT INTO utilisateur (nom,prenom,pseudo,email,motdepasse) VALUES (?,?,?,?,?)";
+                    PreparedStatement ps = this.connection.prepareStatement(insertUser);
+                    ps.setString(1, nom);
+                    ps.setString(2, prenom);
+                    ps.setString(3, pseudo);
+                    ps.setString(4,email);
+                    ps.setString(5,password);
+                    ps.executeUpdate();
+                }else if(responses.get(0).toString().toUpperCase().equals("PLAYLOBBY")) {
+                    String idUser = (String) responses.get(1);
                     System.out.println("PLAY LOBBY");
-                    Statement stmt = this.connection.createStatement();
 
-                    stmt.executeUpdate("INSERT INTO joueur(utilisateur) VALUES (" + idUser + ")");
+                    if(currentnumJoueur%5 ==0) {
+                        String query = "SELECT COUNT(id) AS\"nbPartie\"  FROM partie ";
+                        PreparedStatement ps = this.connection.prepareStatement(query);
+                        ResultSet results = ps.executeQuery();
+                        if(results.next()) {
+                            currentPartie = results.getInt("nbPartie") +1;
+                        }
+
+                        Statement stmt2 = this.connection.createStatement();
+                        stmt2.executeUpdate("INSERT INTO partie(id) VALUES ("+ currentPartie  +")") ;
+                    }
+
+                    Statement stmt = this.connection.createStatement();
+                    stmt.executeUpdate("INSERT INTO joueur(utilisateur,num,partie) VALUES (" + idUser + ","+ ((currentnumJoueur%5)+1) + ","+ currentPartie +")");
+                    System.out.println("INSERT INTO joueur(utilisateur,num,partie) VALUES (" + idUser + ","+ ((currentnumJoueur%5)+1) + ","+ currentPartie +")");
+
                     toSend.add("JOINLOBBY");
+                    toSend.add(currentnumJoueur+1);
+                    currentnumJoueur++;
 
 
 
                 }
-                else if(responses.get(0).toUpperCase().equals("WAIT")) {
+                else if(responses.get(0).toString().toUpperCase().equals("WAIT")) {
+
                     String query = "SELECT COUNT(id) AS\"nbJoueur\"  FROM joueur";
                     PreparedStatement ps = this.connection.prepareStatement(query);
                     ResultSet results = ps.executeQuery();
                     results.next();
-                    String nbJoueur = results.getString("nbJoueur");
+                    int nbJoueur = results.getInt("nbJoueur");
                     toSend.add(nbJoueur);
-                } else if(responses.get(0).toUpperCase().equals("PLAY")) {
-                    String query = "SELECT *  FROM main";
+                } else if(responses.get(0).toString().toUpperCase().equals("PLAY")) {
+                    String idUser = (String) responses.get(1);
+                    System.out.println(responses.get(2));
+                    String query = "SELECT *  FROM main WHERE id = " + responses.get(2);
                     PreparedStatement ps = this.connection.prepareStatement(query);
                     ResultSet results = ps.executeQuery();
-                    System.out.println("toto");
-                    while(results.next()) {
-                    results.next();
-                    ArrayList<String> nomCartes = new ArrayList<>();
+                    if(results.next()) {
                         for(int i =1; i<=15;i++) {
-                            nomCartes.add(results.getString("carte" + i));
+                            //nomCartes.add(results.getString("carte" + i));
+                            Statement stmt2 = this.connection.createStatement();
+                            stmt2.executeUpdate("UPDATE joueur SET carte" + i + " = " + results.getString("carte" + i) + " WHERE utilisateur = " + idUser + " AND partie = "+ currentPartie) ;
                         }
-                        System.out.println(nomCartes);
-
-                    String idCarte = results.getString("prenom");
-                    String nom = results.getString("nom");
-                    String email = results.getString("email");
-
                     }
+
+                    String query2 = "SELECT *  FROM joueur WHERE utilisateur = " + idUser + " AND partie = "+ currentPartie;
+                    PreparedStatement ps2 = this.connection.prepareStatement(query2);
+                    ResultSet results2 = ps2.executeQuery();
+                    String numJoueur = "";
+                    String idCartes = "";
+                    String lienCartes = "";
+                    if(results2.next()) {
+                        numJoueur = results2.getString("num");
+                        for(int i =1; i<=15;i++) {
+                            System.out.println("");
+                            String query3 = "SELECT *  FROM carte WHERE id = " + results2.getString("carte" + i);
+                            PreparedStatement ps3 = this.connection.prepareStatement(query3);
+
+                            ResultSet results3 = ps3.executeQuery();
+                            if (results3.next()) {
+                                lienCartes += results3.getString("lien") + ";";
+                                idCartes += results3.getString("id") + ";";
+                            }
+                        }
+                    }
+
+
+
+                    System.out.println("---" + lienCartes + "   ////  " + idCartes);
+                    toSend.add(lienCartes);
+                    toSend.add(idCartes);
+                    toSend.add(numJoueur);
+
                     // rs.next();
 
-                    String nbJoueur = results.getString("nbJoueur");
+                } else if(responses.get(0).toString().toUpperCase().equals("WAITANSWER")) {
+                    String query = "SELECT COUNT(id) AS\"nbJoueur\"  FROM joueur WHERE reponse != 'WAIT' AND partie = "+ currentPartie;
+                    PreparedStatement ps = this.connection.prepareStatement(query);
+                    ResultSet results = ps.executeQuery();
+                    results.next();
+                    int nbJoueur = results.getInt("nbJoueur")+1;
+
+                    String query2 = "SELECT num, COUNT(id) AS\"nbJoueur\"  FROM joueur WHERE reponse = 'TAKE' AND partie = "+ currentPartie;
+                    PreparedStatement ps2 = this.connection.prepareStatement(query2);
+                    ResultSet results2 = ps2.executeQuery();
+                    results2.next();
+                    int hasTake = results2.getInt("nbJoueur");
+                    int numPlayer = results2.getInt("num");
+
                     toSend.add(nbJoueur);
+                    if(hasTake >0) {
+                        toSend.add("TAKE");
+                        toSend.add(numPlayer);
+                    } else {
+                        toSend.add("NOTAKE");
+                        toSend.add(-1);
+                    }
+
+
+
+                }
+                else if(responses.get(0).toString().toUpperCase().equals("CHIEN")) {
+                    String idUser = (String) responses.get(1);
+
+                    Statement stmt2 = this.connection.createStatement();
+                    stmt2.executeUpdate("UPDATE joueur SET reponse = 'TAKE' , equipe = 1 WHERE utilisateur = " + idUser + " AND partie = " + currentPartie) ;
+
+
+
+                } else if(responses.get(0).toString().toUpperCase().equals("REFUSE")) {
+                    String idUser = (String) responses.get(1);
+
+                    Statement stmt = this.connection.createStatement();
+                    stmt.executeUpdate("UPDATE joueur SET reponse = 'REFUSE' , equipe = 2 WHERE utilisateur = " + idUser + " AND partie = " + currentPartie);
+                }  else if(responses.get(0).toString().toUpperCase().equals("ROIS")) {
+                    String query = "SELECT *  FROM carte WHERE valeur = 'R'";
+                    PreparedStatement ps = this.connection.prepareStatement(query);
+                    ResultSet results = ps.executeQuery();
+                    String idCartes = "";
+                    String lienCartes = "";
+                    while(results.next()) {
+                        idCartes += results.getString("id") + ";";
+                        lienCartes += results.getString("lien") + ";";
+                    }
+                    toSend.add(idCartes);
+                    toSend.add(lienCartes);
+                } else if(responses.get(0).toString().toUpperCase().equals("CALL")) {
+                    System.out.println("Rep");
+                    int idCarte = (int) responses.get(1);
+                    System.out.println(idCarte);
+                    String query2 = "SELECT * FROM joueur WHERE partie = " + currentPartie;
+                    for(int i =1; i< 15; i++) {
+                        if(i==1) {
+                            query2 += " AND carte" + i + " = " + idCarte;
+                        }  else {
+                            query2+= " OR carte" + i + " = " + idCarte + " ";
+                        }
+                    }
+                    int idUserAllied = -1;
+                    PreparedStatement ps2 = this.connection.prepareStatement(query2);
+                    ResultSet results2 = ps2.executeQuery();
+                    if(results2.next()) {
+                        idUserAllied = results2.getInt("utilisateur");
+                    }
+
+                    Statement stmt1 = this.connection.createStatement();
+                    stmt1.executeUpdate("UPDATE joueur SET equipe = 1 WHERE utilisateur = " + idUserAllied + " AND partie = " + currentPartie) ;
+
+                    Statement stmt2 = this.connection.createStatement();
+                    stmt2.executeUpdate("UPDATE joueur SET equipe = 2 WHERE equipe != 1 AND partie = " + currentPartie) ;
+
+                    String query3 = "SELECT * FROM chien";
+                    PreparedStatement ps3 = this.connection.prepareStatement(query3);
+                    ResultSet results3 = ps3.executeQuery();
+                    ArrayList<Integer> idCartes = new ArrayList<>();
+                    ArrayList<String> lienCartes = new ArrayList<>();
+                    if(results3.next()) {
+                        for(int i = 1; i <= 3; i++) {
+                            String query4 = "SELECT * FROM carte WHERE id = " + results3.getInt("carte" + i) ;
+                            PreparedStatement ps4 = this.connection.prepareStatement(query4);
+                            ResultSet results4 = ps4.executeQuery();
+                            if(results4.next()) {
+                                idCartes.add(results4.getInt("id"));
+                                lienCartes.add(results4.getString("lien"));
+                            }
+                        }
+                    }
+                    toSend.add(idCartes);
+                    toSend.add(lienCartes);
+                    callDone = true;
+
+
+                } else if(responses.get(0).toString().toUpperCase().equals("WAITCALL")) {
+
+                    String query = "SELECT * FROM chien";
+                    PreparedStatement ps = this.connection.prepareStatement(query);
+                    ResultSet results = ps.executeQuery();
+                    ArrayList<Integer> idCartes = new ArrayList<>();
+                    ArrayList<String> lienCartes = new ArrayList<>();
+                    if(results.next()) {
+                        for(int i = 1; i <= 3; i++) {
+                            String query1 = "SELECT * FROM carte WHERE id = " + results.getInt("carte" + i) ;
+                            PreparedStatement ps1 = this.connection.prepareStatement(query1);
+                            ResultSet results1 = ps1.executeQuery();
+                            if(results1.next()) {
+                                idCartes.add(results1.getInt("id"));
+                                lienCartes.add(results1.getString("lien"));
+                            }
+                        }
+                    }
+                        toSend.add(callDone);
+                        toSend.add(idCartes);
+                        toSend.add(lienCartes);
+
+
                 }else {
                         toSend.add("UNKNOWN_COMMAND");
                         break;

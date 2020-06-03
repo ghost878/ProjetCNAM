@@ -45,18 +45,24 @@ public class ConnexionController extends Application {
     private ImageView background;
     @FXML
     private ImageView icon;
+    // formulaire d'inscription
     @FXML
-    private Label username;
+    private TextField nom;
     @FXML
-    private Label password;
+    private TextField prenom;
+    @FXML
+    private TextField username;
+    @FXML
+    private TextField password;
+    @FXML
+    private TextField email;
+    @FXML
+    private CheckBox checkBox;
+    // formulaire de connexion
     @FXML
     private TextField login;
     @FXML
-    private TextField user;
-    @FXML
     private PasswordField pass;
-    @FXML
-    private CheckBox checkBox;
     @FXML
     private Button loginButton;
     @FXML
@@ -76,67 +82,13 @@ public class ConnexionController extends Application {
        String password = this.pass.getText();
         MySQLConnection db = new MySQLConnection("jdbc:mysql://localhost:3306/tarot_project","root","");
         this.connection = db.getConnection();
-/*
-       if (login != null && password != null) {
 
-           String query = "SELECT pseudo, motdepasse FROM utilisateur WHERE pseudo=? AND motdepasse=?";
-           PreparedStatement ps = this.connection.prepareStatement(query);
-           ps.setString(1,pseudo);
-           ps.setString(2,password);
-           ResultSet results = ps.executeQuery();
-
-           if (results.next()) {
-               System.out.println("Utilisateur et mot de passe correct");
-               //JOptionPane.showMessageDialog(null,"L'utilisateur et le mot de passe sont correct");
-               FXMLLoader loader = new FXMLLoader(getClass().getResource("accueil.fxml"));
-               Parent root = loader.load();
-               Scene scene = new Scene(root, 700, 400);
-               scene.getStylesheets().add(getClass().getResource("style.css").toString());
-               stageAccueil.setTitle("Accueil");
-               stageAccueil.setScene(scene);
-               stageAccueil.show();
-               primaryStage.hide();
-
-               Statement stmt = this.connection.createStatement();
-               */
-/**
-                * Exemple de requête avec BD
-                *//*
-
-               ResultSet rs = stmt.executeQuery("SELECT nom, prenom, pseudo, email  FROM utilisateur WHERE pseudo LIKE \""+ pseudo +"\"");
-               //ResultSet rs = stmt.executeQuery("SELECT *  FROM utilisateur");
-               //while(rs.next()) {
-               rs.next();
-                   String prenom = rs.getString("prenom");
-                   String nom = rs.getString("nom");
-                String email = rs.getString("email");
-
-               //}
-              // rs.next();
-               //String name = rs.getString(1);
-               System.out.println(nom);
-               VBox infoBox = (VBox) root.lookup("#boxInfo");
-               infoBox.getChildren().add(new Label("Prenom : " + prenom));
-               infoBox.getChildren().add(new Label("Nom : " + nom));
-               infoBox.getChildren().add(new Label("Email : " + email));
-               Label lblData = (Label) root.lookup("#labelBonjour");
-               lblData.setText("Bonjour " + pseudo);
-
-               AccueilController controller = loader.getController();
-               //controller.init();
-
-
-*/
-
-
-               //lancement de la session - connexion au serveur
-               //System.out.println(pseudo);
-            ArrayList<String> connects = new ArrayList<>();
+            ArrayList<Object> connects = new ArrayList<>();
             connects.add("CONN");
             connects.add(pseudo);
             connects.add(password);
-            ClientConnexion client = new ClientConnexion("192.168.1.77",3333,connects);
-            ArrayList<String> responses = client.run();
+            ClientConnexion client = new ClientConnexion("79.94.239.225",3333,connects);
+            ArrayList<Object> responses = client.run();
             if(responses.get(0).equals("OK")) {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("accueil.fxml"));
                 Parent root = loader.load();
@@ -148,10 +100,10 @@ public class ConnexionController extends Application {
                 primaryStage.hide();
 
 
-                String nom = responses.get(1);
-                String prenom = responses.get(2);
-                String email = responses.get(3);
-                idUser = responses.get(4);
+                String nom = (String) responses.get(1);
+                String prenom = (String) responses.get(2);
+                String email = (String) responses.get(3);
+                idUser = (String) responses.get(4);
 
                //}
               // rs.next();
@@ -171,14 +123,27 @@ public class ConnexionController extends Application {
 
 
     public void onSignIn(ActionEvent event) {
-        System.out.println("Inscription function");
+        ArrayList<Object> datas = new ArrayList<>();
+        String nom = this.nom.getText();
+        String prenom = this.prenom.getText();
+        String username = this.username.getText();
+        String password = this.password.getText();
+        String email = this.email.getText();
+        datas.add("INSC");
+        datas.add(nom);
+        datas.add(prenom);
+        datas.add(username);
+        datas.add(password);
+        datas.add(email);
+        ClientConnexion client = new ClientConnexion("192.168.1.77",3333,datas);
+        ArrayList<Object> responses = client.run();
     }
 
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("connexion.fxml"));
         Parent root = loader.load();
-        Scene scene = new Scene(root, 700, 400);
+        Scene scene = new Scene(root, 900, 500);
         scene.getStylesheets().add(getClass().getResource("style.css").toString());
         primaryStage.setTitle("Connexion");
         primaryStage.setScene(scene);

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -8,7 +10,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" style="-fx-background-color: darkgreen;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.PartieController">
    <bottom>
-      <HBox prefHeight="109.0" prefWidth="800.0" BorderPane.alignment="CENTER" />
+      <HBox fx:id="main" prefHeight="109.0" prefWidth="800.0" BorderPane.alignment="CENTER" />
    </bottom>
    <left>
       <Pane BorderPane.alignment="CENTER">
@@ -48,4 +50,22 @@
          </children>
       </Pane>
    </right>
+   <center>
+      <Pane prefHeight="88.0" prefWidth="38.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fx:id="carteCenter" fitHeight="90.0" fitWidth="60.0" layoutX="260.0" layoutY="54.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/carte.png" />
+               </image>
+            </ImageView>
+            <Button fx:id="take" layoutX="144.0" layoutY="168.0" mnemonicParsing="false" onAction="#playWithDog" prefHeight="44.0" prefWidth="116.0" text="Prendre le chien" visible="false" />
+            <Button fx:id="refuse" layoutX="320.0" layoutY="169.0" mnemonicParsing="false" onAction="#playWithoutDog" prefHeight="43.0" prefWidth="130.0" text="Refuser le chien" visible="false" />
+            <Button fx:id="play" layoutX="195.0" layoutY="178.0" mnemonicParsing="false" onAction="#play" prefHeight="40.0" prefWidth="192.0" text="Jouer" />
+            <HBox fx:id="boxRois" layoutX="111.0" layoutY="49.0" prefHeight="100.0" prefWidth="351.0" />
+         </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+      </Pane>
+   </center>
 </BorderPane>

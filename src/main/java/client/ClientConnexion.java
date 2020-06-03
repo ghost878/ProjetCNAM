@@ -16,17 +16,17 @@ public class ClientConnexion {
     private Socket connexion;
     private PrintWriter writer;
     private BufferedInputStream reader;
-    private ArrayList<String> datas;
+    private ArrayList<Object> datas;
     private static int count = 0;
     private String name = "Client-";
-    private ArrayList<String> response;
+    private ArrayList<Object> response;
 
     /**
      *
      * @param host
      * @param port
      */
-    public ClientConnexion(String host, int port, ArrayList<String> datas) {
+    public ClientConnexion(String host, int port, ArrayList<Object> datas) {
         try {
             this.
             name += ++count;
@@ -40,14 +40,14 @@ public class ClientConnexion {
         }
     }
 
-    public ArrayList<String> getResponse() {
+    public ArrayList<Object> getResponse() {
         return response;
     }
 
     /**
      * Simulation d'envoie de commande de client au serveur.
      */
-    public ArrayList<String> run() {
+    public ArrayList<Object> run() {
         //for(int i =0; i < 10; i++){
         try {
             Thread.currentThread().sleep(1000);
@@ -77,7 +77,7 @@ public class ClientConnexion {
             //On attend la réponse
             InputStream inputStream = connexion.getInputStream();
             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-            this.response = (ArrayList<String>) objectInputStream.readObject();
+            this.response = (ArrayList<Object>) objectInputStream.readObject();
             System.out.println("Réponse du serveur " + response);
             objectInputStream.close();
             System.out.println("\t * " + name + " : Réponse reçue " + response);
