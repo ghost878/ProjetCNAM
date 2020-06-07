@@ -7,25 +7,25 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.AccueilController">
+<AnchorPane prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.AccueilController">
    <children>
-      <SplitPane fx:id="split" dividerPositions="0.38190954773869346" orientation="VERTICAL" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <SplitPane fx:id="splitPane" dividerPositions="0.38190954773869346" orientation="VERTICAL" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-          <AnchorPane fx:id="anchorUser" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+          <AnchorPane fx:id="anchorUser" minHeight="0.0" minWidth="0.0" prefHeight="150.0" prefWidth="900.0">
                <children>
-                  <Label fx:id="labelBonjour" alignment="CENTER" layoutX="282.0" layoutY="14.0">
+                  <Label fx:id="labelBonjour" alignment="CENTER" contentDisplay="CENTER" layoutX="207.0" layoutY="10.0" prefHeight="44.0" prefWidth="502.0" textAlignment="CENTER">
                      <font>
                         <Font size="29.0" />
                      </font>
                   </Label>
-                  <VBox fx:id="boxInfo" alignment="CENTER" layoutX="163.0" layoutY="63.0" prefHeight="79.0" prefWidth="291.0" style="-fx-border-color: black;" />
+                  <VBox fx:id="boxInfo" alignment="CENTER" layoutX="206.0" layoutY="54.0" prefHeight="114.0" prefWidth="502.0" style="-fx-border-color: black;" />
                </children>
             </AnchorPane>
-          <AnchorPane fx:id="anchorPlay" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+          <AnchorPane fx:id="anchorPlay" minHeight="0.0" minWidth="0.0" prefHeight="350.0" prefWidth="900.0">
                <children>
-                  <Button fx:id="playButton" alignment="CENTER" layoutX="248.0" layoutY="132.0" mnemonicParsing="false" onAction="#play" text="Jouer une partie" />
-                  <Button fx:id="scoreButton" alignment="CENTER" layoutX="256.0" layoutY="77.0" mnemonicParsing="false" text="Voir résultats" />
-                  <Button fx:id="disconnectButton" alignment="CENTER" layoutX="256.0" layoutY="184.0" mnemonicParsing="false" onAction="#disconnect" text="Deconnexion" />
+                  <Button fx:id="playButton" alignment="CENTER" layoutX="398.0" layoutY="128.0" mnemonicParsing="false" onAction="#play" text="Jouer une partie" />
+                  <Button fx:id="scoreButton" alignment="CENTER" layoutX="406.0" layoutY="77.0" mnemonicParsing="false" text="Voir résultats" />
+                  <Button fx:id="disconnectButton" alignment="CENTER" layoutX="406.0" layoutY="187.0" mnemonicParsing="false" onAction="#disconnect" text="Deconnexion" />
                </children>
             </AnchorPane>
         </items>

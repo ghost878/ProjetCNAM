@@ -22,7 +22,8 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class ConnexionController extends Application {
-
+    
+    public static String host = "192.168.1.77";
     public static MySQLConnection db;
     public static String pseudo;
 
@@ -53,7 +54,7 @@ public class ConnexionController extends Application {
     @FXML
     private TextField username;
     @FXML
-    private TextField password;
+    private PasswordField password;
     @FXML
     private TextField email;
     @FXML
@@ -87,13 +88,14 @@ public class ConnexionController extends Application {
             connects.add("CONN");
             connects.add(pseudo);
             connects.add(password);
-            ClientConnexion client = new ClientConnexion("79.94.239.225",3333,connects);
+            ClientConnexion client = new ClientConnexion(host,3333,connects);
             ArrayList<Object> responses = client.run();
             if(responses.get(0).equals("OK")) {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("accueil.fxml"));
                 Parent root = loader.load();
-                Scene scene = new Scene(root, 700, 400);
+                Scene scene = new Scene(root, 900, 500);
                 scene.getStylesheets().add(getClass().getResource("style.css").toString());
+                stageAccueil.setResizable(false);
                 stageAccueil.setTitle("Accueil");
                 stageAccueil.setScene(scene);
                 stageAccueil.show();
@@ -135,8 +137,14 @@ public class ConnexionController extends Application {
         datas.add(username);
         datas.add(password);
         datas.add(email);
-        ClientConnexion client = new ClientConnexion("192.168.1.77",3333,datas);
+        ClientConnexion client = new ClientConnexion(host,3333,datas);
         ArrayList<Object> responses = client.run();
+        boolean pseudoInBDD = (boolean) responses.get(0);
+        if(pseudoInBDD == true) {
+            JOptionPane.showMessageDialog(null, "Utilisateur d\u00e9j\u00e0 pr\u00e9sent dans la base de donn\u00e9e");
+        } else  {
+            JOptionPane.showMessageDialog(null,"Inscription faite !");
+        }
     }
 
     @Override
@@ -145,6 +153,7 @@ public class ConnexionController extends Application {
         Parent root = loader.load();
         Scene scene = new Scene(root, 900, 500);
         scene.getStylesheets().add(getClass().getResource("style.css").toString());
+        primaryStage.setResizable(false);
         primaryStage.setTitle("Connexion");
         primaryStage.setScene(scene);
         primaryStage.show();

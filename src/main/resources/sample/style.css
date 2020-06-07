@@ -4,15 +4,11 @@
 }
 
 .page {
-    -fx-background-color: darkgrey;
-    -fx-border-color: darkgrey;
+    -fx-background-color: lightgrey;
+    -fx-border-color: lightgrey;
 }
 
 .box {
-    -fx-background-color: drakgrey;
-    -fx-border-color: darkgrey;
-}
-
-.vboxAccueil {
-
+    -fx-background-color: lightgrey;
+    -fx-border-color: lightgrey;
 }

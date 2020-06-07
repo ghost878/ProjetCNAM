@@ -55,14 +55,12 @@ public class AccueilController {
         ArrayList<Object> waits = new ArrayList<>();
         connects.add("PLAYLOBBY");
         connects.add(ConnexionController.idUser);
-        System.out.println("Méthode plays " + connects.get(1));
-        ClientConnexion client = new ClientConnexion("192.168.1.77",3333,connects);
+        ClientConnexion client = new ClientConnexion(ConnexionController.host,3333,connects);
         ArrayList<Object> datas = client.run();
-        System.out.println("Reponse :" + datas.get(0));
         int nbJoueur = -1;
         while(nbJoueur != 0) {
             waits.add("WAIT");
-            ClientConnexion client1 = new ClientConnexion("192.168.1.77",3333,waits);
+            ClientConnexion client1 = new ClientConnexion(ConnexionController.host,3333,waits);
             ArrayList<Object> datas1 = client1.run();
             nbJoueur = (int)datas1.get(0)%5;
             if(nbJoueur == 0) {
@@ -76,10 +74,10 @@ public class AccueilController {
         plays.add("PLAY");
         plays.add(ConnexionController.idUser);
         plays.add(datas.get(1));
-        ClientConnexion client2 = new ClientConnexion("192.168.1.77",3333,plays);
+        ClientConnexion client2 = new ClientConnexion(ConnexionController.host,3333,plays);
         ArrayList<Object> datas2 = client2.run();
-        String lienCartes[] = datas2.get(0).toString().split(";");
-        String idCartes[] = datas2.get(1).toString().split(";");
+        ArrayList<String> idCartes = (ArrayList<String>) datas2.get(0);
+        ArrayList<String> lienCartes = (ArrayList<String>) datas2.get(1);
         numJoueur = (String) datas2.get(2);
 
 
@@ -87,8 +85,9 @@ public class AccueilController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("partie.fxml"));
         Parent root = loader.load();
         Stage gameStage = new Stage();
-        Scene scene = new Scene(root, 700, 400);
+        Scene scene = new Scene(root, 900, 500);
         scene.getStylesheets().add(getClass().getResource("style.css").toString());
+        gameStage.setResizable(false);
         gameStage.setTitle("Tarot en ligne");
         gameStage.setScene(scene);
         gameStage.show();
@@ -96,16 +95,10 @@ public class AccueilController {
 
         HBox main = (HBox) root.lookup("#main");
         main.setSpacing(10);
-        for(int i = 0; i < lienCartes.length ; i++) {
-            File f = new File("L:/CNAM/PROJET/ProjetCNAM/src/main/resources/sample/img/" + lienCartes[i]);
-            if(f.exists()) {
-                main.getChildren().add(new ImageView(new Image("/sample/img/" + lienCartes[i])));
-            }
+        for(int i = 0; i < idCartes.size() ; i++) {
+                ImageView imageCarte = new ImageView(new Image("/sample/img/" + lienCartes.get(i), 40,60,false,false));
+                imageCarte.setId(idCartes.get(i));
+                main.getChildren().add(imageCarte);
         }
-        //Thread.currentThread().sleep(1000);
-        //int input = JOptionPane.showConfirmDialog(null, "Do you like bacon?");
-        // 0=yes, 1=no, 2=cancel
-        //System.out.println(input);
-
     }
 }
